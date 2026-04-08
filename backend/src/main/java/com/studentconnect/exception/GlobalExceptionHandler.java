@@ -73,10 +73,15 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.CONFLICT, message);
     }
 
+    @ExceptionHandler(org.springframework.web.HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<Map<String, Object>> handleMethodNotAllowed(org.springframework.web.HttpRequestMethodNotSupportedException ex) {
+        return buildErrorResponse(HttpStatus.METHOD_NOT_ALLOWED, "Method " + ex.getMethod() + " not supported. Use: " + ex.getSupportedHttpMethods());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
         logger.error("Unhandled exception: {} - {}", ex.getClass().getSimpleName(), ex.getMessage(), ex);
-        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
     }
 
     @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
