@@ -39,19 +39,23 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                                         Authentication authentication)
             throws IOException, ServletException {
 
-        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-
-        String email = oAuth2User.getAttribute("email");
-        String name = oAuth2User.getAttribute("name");
-
-        if (email == null) {
-            logger.error("OAuth2 login failed: no email returned from provider");
-            response.sendRedirect(frontendUrl + "/login?error=" +
-                    URLEncoder.encode("Google did not provide an email address", StandardCharsets.UTF_8));
-            return;
-        }
-
         try {
+            System.out.println("OAuth login started");
+            
+            OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+
+            String email = oAuth2User.getAttribute("email");
+            String name = oAuth2User.getAttribute("name");
+
+            System.out.println("User email: " + email);
+
+            if (email == null) {
+                logger.error("OAuth2 login failed: no email returned from provider");
+                response.sendRedirect(frontendUrl + "/login?error=" +
+                        URLEncoder.encode("Google did not provide an email address", StandardCharsets.UTF_8));
+                return;
+            }
+
             User user = userRepository.findByEmail(email).orElse(null);
 
             if (user == null) {
@@ -63,24 +67,42 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                     username = username + "_" + UUID.randomUUID().toString().substring(0, 6);
                 }
 
-                user = User.builder()
-                        .email(email)
-                        .password(passwordEncoder.encode(UUID.randomUUID().toString()))
-                        .fullName(name != null ? name : "Google User")
-                        .username(username)
-                        .role("STUDENT")
-                        .isEnabled(true)
-                        .verified(true)
-                        .build();
+                user = new User();
+                user.setEmail(email);
+                user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
+                user.setFullName(name != null ? name : "Google User");
+                user.setUsername(username);
+                user.setRole("STUDENT");
+                user.setEnabled(true);
+                user.setVerified(true);
                 userRepository.save(user);
+                
                 logger.info("Auto-registered Google user: {}", email);
-            } else if (!user.isEnabled()) {
-                // Existing unverified user → verify via Google
+            }
+
+            // Prevent null values
+            boolean updated = false;
+            
+            if (user.getRole() == null || user.getRole().isEmpty()) {
+                user.setRole("STUDENT");
+                updated = true;
+            }
+            
+            if (user.getVerified() == null) {
+                user.setVerified(true);
+                updated = true;
+            }
+            
+            if (!user.isEnabled()) {
                 user.setEnabled(true);
                 user.setVerified(true);
                 user.setVerificationToken(null);
-                userRepository.save(user);
+                updated = true;
                 logger.info("Verified existing user via Google OAuth: {}", email);
+            }
+
+            if (updated) {
+                userRepository.save(user);
             }
 
             String token = jwtTokenProvider.generateToken(user.getEmail());
@@ -90,9 +112,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                     URLEncoder.encode(token, StandardCharsets.UTF_8));
 
         } catch (Exception e) {
-            logger.error("OAuth2 success handler failed for email: {}", email, e);
+            e.printStackTrace();
+            logger.error("OAuth2 success handler failed", e);
             response.sendRedirect(frontendUrl + "/login?error=" +
-                    URLEncoder.encode("Login failed. Please try again.", StandardCharsets.UTF_8));
+                    URLEncoder.encode("Google sign-in failed. Please try again.", StandardCharsets.UTF_8));
         }
     }
 }
