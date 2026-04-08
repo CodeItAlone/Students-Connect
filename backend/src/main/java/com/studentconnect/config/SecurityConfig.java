@@ -62,7 +62,20 @@ public class SecurityConfig {
                         .failureHandler(oAuth2FailureHandler)
                 )
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new org.springframework.web.filter.OncePerRequestFilter() {
+                    @Override
+                    protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request, 
+                                                    jakarta.servlet.http.HttpServletResponse response, 
+                                                    jakarta.servlet.FilterChain filterChain) 
+                                                    throws jakarta.servlet.ServletException, java.io.IOException {
+                        String origin = request.getHeader("Origin");
+                        if (origin != null) {
+                            log.debug("Inbound Request from Origin: {} to Path: {}", origin, request.getRequestURI());
+                        }
+                        filterChain.doFilter(request, response);
+                    }
+                }, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -71,35 +84,38 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
+        java.util.List<String> origins = new java.util.ArrayList<>();
         if (allowedOrigins != null && !allowedOrigins.isEmpty()) {
-            java.util.List<String> origins = java.util.Arrays.stream(allowedOrigins.split(","))
-                    .map(String::trim)
-                    .filter(s -> !s.isEmpty())
-                    .collect(java.util.stream.Collectors.toList());
-            log.info("Setting CORS allowed origins to: {}", origins);
-            configuration.setAllowedOrigins(origins);
-        } else {
+            for (String origin : allowedOrigins.split(",")) {
+                String trimmed = origin.trim();
+                if (!trimmed.isEmpty()) {
+                    origins.add(trimmed);
+                    // Add version without trailing slash if it has one, and vice versa
+                    if (trimmed.endsWith("/")) {
+                        origins.add(trimmed.substring(0, trimmed.length() - 1));
+                    } else {
+                        origins.add(trimmed + "/");
+                    }
+                }
+            }
+        }
+        
+        if (origins.isEmpty()) {
             configuration.setAllowedOriginPatterns(List.of("http://localhost:*", "http://127.0.0.1:*"));
+        } else {
+            log.info("Applying CORS Allowed Origins: {}", origins);
+            configuration.setAllowedOrigins(origins);
         }
         
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        // Explicitly listing headers instead of "*" for better compatibility with setAllowCredentials(true)
-        configuration.setAllowedHeaders(List.of(
-            "Authorization", 
-            "Content-Type", 
-            "X-Requested-With", 
-            "Accept", 
-            "Origin", 
-            "Access-Control-Request-Method", 
-            "Access-Control-Request-Headers"
-        ));
-        configuration.setExposedHeaders(List.of("Authorization"));
+        configuration.setAllowedHeaders(List.of("*")); // Reverting to * temporarily to see if it fixes the block
         configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L); // 1 hour cache for preflight
+        configuration.setMaxAge(3600L);
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 }
+
 
