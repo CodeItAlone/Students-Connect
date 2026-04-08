@@ -2,7 +2,6 @@
 # Build & Dependencies
 # ================================
 node_modules/
-target/
 .next/
 out/
 build/
@@ -50,5 +49,4 @@ docs/
 # Java/Spring Boot specific
 # ================================
 *.class
-*.jar
 *.war

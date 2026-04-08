@@ -1,9 +1,7 @@
 # ====================
 # Build / IDE
 # ====================
-target/
 *.class
-*.jar
 *.war
 *.log
 .idea/
