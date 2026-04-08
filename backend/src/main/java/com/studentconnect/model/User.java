@@ -48,6 +48,10 @@ public class User {
     @Builder.Default
     private boolean isEnabled = false;
 
+    @Column(name = "verified", nullable = false)
+    @Builder.Default
+    private Boolean verified = false;
+
     private String verificationToken;
 
     @Column(name = "created_at", nullable = false, updatable = false)

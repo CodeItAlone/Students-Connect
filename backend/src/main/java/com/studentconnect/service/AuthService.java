@@ -54,6 +54,7 @@ public class AuthService {
                 .year(request.getYear())
                 .role("STUDENT")
                 .isEnabled(false)
+                .verified(false)
                 .verificationToken(jwtTokenProvider.generateVerificationToken(request.getEmail()))
                 .build();
 
@@ -105,6 +106,7 @@ public class AuthService {
                             .username(email.substring(0, email.indexOf("@")))
                             .role("STUDENT")
                             .isEnabled(true)
+                            .verified(true)
                             .build();
                     userRepository.save(user);
                 } else if (!user.isEnabled()) {

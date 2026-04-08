@@ -67,7 +67,7 @@ public class GlobalExceptionHandler {
             } else if (cause.contains("email")) {
                 message = "Email already exists";
             } else {
-                message = "Database constraint violation: " + cause;
+                message = "Registration failed due to a data conflict. Please try again.";
             }
         }
         return buildErrorResponse(HttpStatus.CONFLICT, message);
@@ -81,7 +81,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
         logger.error("Unhandled exception: {} - {}", ex.getClass().getSimpleName(), ex.getMessage(), ex);
-        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred. Please try again later.");
     }
 
     @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)

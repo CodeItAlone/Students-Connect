@@ -35,7 +35,7 @@ export const useChatStore = create<ChatState>()((set, get) => ({
     },
 
     connect: (clubId: number) => {
-        const socket = new SockJS(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/ws`);
+        const socket = new SockJS(`${process.env.NEXT_PUBLIC_API_URL || 'https://students-connect-bw3g.onrender.com'}/ws`);
         const client = new Client({
             webSocketFactory: () => socket,
             onConnect: () => {

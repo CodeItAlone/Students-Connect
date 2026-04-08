@@ -2,7 +2,7 @@ import { Client, IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { useAuthStore } from '@/stores/authStore';
 
-const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'http://localhost:8080/ws';
+const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'https://students-connect-bw3g.onrender.com/ws';
 
 let stompClient: Client | null = null;
 

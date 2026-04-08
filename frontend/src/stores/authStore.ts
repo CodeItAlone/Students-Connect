@@ -13,6 +13,7 @@ interface AuthState {
     register: (data: RegisterDto) => Promise<void>;
     logout: () => void;
     refreshToken: () => Promise<void>;
+    initializeOAuth: (token: string) => Promise<void>;
     setUser: (user: User) => void;
     clearError: () => void;
 }
@@ -83,6 +84,29 @@ export const useAuthStore = create<AuthState>()(
                     set({ accessToken, user, isAuthenticated: true });
                 } catch (error) {
                     get().logout();
+                    throw error;
+                }
+            },
+
+            initializeOAuth: async (token: string) => {
+                set({ isLoading: true, error: null });
+                try {
+                    localStorage.setItem("token", token);
+                    const userResp = await api.get<User>('/users/me');
+                    const user = userResp.data;
+
+                    set({
+                        user,
+                        accessToken: token,
+                        isAuthenticated: true,
+                        isLoading: false,
+                    });
+                } catch (error: any) {
+                    localStorage.removeItem("token");
+                    set({
+                        isLoading: false,
+                        error: error.response?.data?.message || 'OAuth initialization failed',
+                    });
                     throw error;
                 }
             },

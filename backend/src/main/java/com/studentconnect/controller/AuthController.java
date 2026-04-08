@@ -14,8 +14,17 @@ public class AuthController {
 
     @PostMapping("/register")
     public org.springframework.http.ResponseEntity<java.util.Map<String, String>> register(@RequestBody RegisterRequest request) {
-        authService.register(request);
-        return org.springframework.http.ResponseEntity.ok(java.util.Map.of("message", "User registered"));
+        try {
+            authService.register(request);
+            return org.springframework.http.ResponseEntity.ok(java.util.Map.of("message", "User registered successfully. Please check your email to verify your account."));
+        } catch (org.springframework.web.server.ResponseStatusException e) {
+            throw e;
+        } catch (Exception e) {
+            org.slf4j.LoggerFactory.getLogger(AuthController.class).error("Registration failed for email: {}", request.getEmail(), e);
+            return org.springframework.http.ResponseEntity
+                    .status(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(java.util.Map.of("message", "Registration failed. Please try again."));
+        }
     }
 
     @PostMapping("/login")
