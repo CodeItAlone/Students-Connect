@@ -32,7 +32,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
@@ -52,42 +52,27 @@ public class SecurityConfig {
                         .failureHandler(oAuth2FailureHandler)
                 )
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()))
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new org.springframework.web.filter.OncePerRequestFilter() {
-                    @Override
-                    protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request, 
-                                                    jakarta.servlet.http.HttpServletResponse response, 
-                                                    jakarta.servlet.FilterChain filterChain) 
-                                                    throws jakarta.servlet.ServletException, java.io.IOException {
-                        String origin = request.getHeader("Origin");
-                        if (origin != null) {
-                            log.debug("Inbound Request from Origin: {} to Path: {}", origin, request.getRequestURI());
-                        }
-                        filterChain.doFilter(request, response);
-                    }
-                }, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
-    @org.springframework.core.annotation.Order(org.springframework.core.Ordered.HIGHEST_PRECEDENCE)
-    public org.springframework.web.filter.CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        
-        config.setAllowCredentials(true);
-        // Using Patterns for better flexibility
-        config.setAllowedOriginPatterns(java.util.List.of(
-            "http://localhost:3000",
-            "https://students-connect.vercel.app*"
+    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(java.util.List.of(
+                "http://localhost:3000",
+                "https://students-connect.vercel.app"
         ));
-        config.setAllowedHeaders(java.util.List.of("*"));
-        config.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        config.setExposedHeaders(java.util.List.of("Authorization", "Content-Type"));
-        config.setMaxAge(3600L);
-        
-        source.registerCorsConfiguration("/**", config);
-        return new org.springframework.web.filter.CorsFilter(source);
+        configuration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(java.util.List.of("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setExposedHeaders(java.util.List.of("Authorization"));
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
+
