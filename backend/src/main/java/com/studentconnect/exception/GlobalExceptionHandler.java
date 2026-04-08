@@ -60,11 +60,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleDataIntegrity(DataIntegrityViolationException ex) {
         String message = "A record with this data already exists";
         String cause = ex.getMostSpecificCause().getMessage();
+        logger.error("DataIntegrityViolation: {}", cause);
         if (cause != null) {
             if (cause.contains("username")) {
                 message = "Username already taken";
             } else if (cause.contains("email")) {
                 message = "Email already exists";
+            } else {
+                message = "Database constraint violation: " + cause;
             }
         }
         return buildErrorResponse(HttpStatus.CONFLICT, message);
