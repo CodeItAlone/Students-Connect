@@ -83,35 +83,15 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        
-        java.util.List<String> origins = new java.util.ArrayList<>();
-        if (allowedOrigins != null && !allowedOrigins.isEmpty()) {
-            for (String origin : allowedOrigins.split(",")) {
-                String trimmed = origin.trim();
-                if (!trimmed.isEmpty()) {
-                    origins.add(trimmed);
-                    // Add version without trailing slash if it has one, and vice versa
-                    if (trimmed.endsWith("/")) {
-                        origins.add(trimmed.substring(0, trimmed.length() - 1));
-                    } else {
-                        origins.add(trimmed + "/");
-                    }
-                }
-            }
-        }
-        
-        if (origins.isEmpty()) {
-            configuration.setAllowedOriginPatterns(List.of("http://localhost:*", "http://127.0.0.1:*"));
-        } else {
-            log.info("Applying CORS Allowed Origins: {}", origins);
-            configuration.setAllowedOrigins(origins);
-        }
-        
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(List.of("*")); // Reverting to * temporarily to see if it fixes the block
+
+        configuration.setAllowedOrigins(java.util.List.of(
+            "http://localhost:3000",
+            "https://students-connect.vercel.app"
+        ));
+        configuration.setAllowedMethods(java.util.List.of("*"));
+        configuration.setAllowedHeaders(java.util.List.of("*"));
         configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
