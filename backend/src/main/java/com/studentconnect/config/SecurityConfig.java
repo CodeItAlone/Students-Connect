@@ -23,6 +23,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@lombok.extern.slf4j.Slf4j
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
@@ -31,6 +32,11 @@ public class SecurityConfig {
 
     @org.springframework.beans.factory.annotation.Value("${app.cors.allowed-origins}")
     private String allowedOrigins;
+
+    @jakarta.annotation.PostConstruct
+    public void logConfig() {
+        log.info("CORS Allowed Origins configured as: {}", allowedOrigins);
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -66,15 +72,31 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         
         if (allowedOrigins != null && !allowedOrigins.isEmpty()) {
-            java.util.List<String> origins = java.util.Arrays.asList(allowedOrigins.split(","));
+            java.util.List<String> origins = java.util.Arrays.stream(allowedOrigins.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .collect(java.util.stream.Collectors.toList());
+            log.info("Setting CORS allowed origins to: {}", origins);
             configuration.setAllowedOrigins(origins);
         } else {
             configuration.setAllowedOriginPatterns(List.of("http://localhost:*", "http://127.0.0.1:*"));
         }
         
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(List.of("*"));
+        // Explicitly listing headers instead of "*" for better compatibility with setAllowCredentials(true)
+        configuration.setAllowedHeaders(List.of(
+            "Authorization", 
+            "Content-Type", 
+            "X-Requested-With", 
+            "Accept", 
+            "Origin", 
+            "Access-Control-Request-Method", 
+            "Access-Control-Request-Headers"
+        ));
+        configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L); // 1 hour cache for preflight
+        
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

@@ -59,6 +59,7 @@ public class AuthService {
                 .build();
 
         userRepository.save(user);
+        logger.info("User {} successfully saved to database. Proceeding to send verification email.", request.getEmail());
         
         // Send verification email (failure-safe: registration still succeeds)
         try {
