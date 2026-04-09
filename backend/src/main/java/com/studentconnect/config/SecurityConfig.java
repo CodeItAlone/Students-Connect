@@ -3,6 +3,7 @@ package com.studentconnect.config;
 import com.studentconnect.security.JwtFilter;
 import com.studentconnect.security.OAuth2SuccessHandler;
 import com.studentconnect.security.OAuth2FailureHandler;
+import org.springframework.security.config.Customizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,12 +16,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.core.Ordered;
+import org.springframework.web.cors.CorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
@@ -45,7 +43,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
@@ -71,17 +69,17 @@ public class SecurityConfig {
     }
 
     @Bean
-    public FilterRegistrationBean<CorsFilter> corsFilterRegistrationBean() {
+    public CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         
         config.setAllowCredentials(true);
         
-        List<String> origins = Arrays.stream(allowedOrigins.split(","))
-                .map(String::trim)
-                .collect(Collectors.toList());
+        // Use wildcard patterns to ensure total compatibility with production origins
+        // while still supporting allowCredentials(true)
+        List<String> origins = List.of("*");
         
-        System.out.println("=== [CORS DEBUG] INITIALIZING HIGHEST PRECEDENCE FILTER WITH ORIGINS: " + origins + " ===");
+        System.out.println("=== [CORS DEBUG] INITIALIZING WITH WILDCARD ORIGIN PATTERNS: " + origins + " ===");
         
         config.setAllowedOriginPatterns(origins);
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
@@ -90,11 +88,7 @@ public class SecurityConfig {
         config.setMaxAge(3600L);
         
         source.registerCorsConfiguration("/**", config);
-        
-        FilterRegistrationBean<CorsFilter> bean = 
-                new FilterRegistrationBean<>(new CorsFilter(source));
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        return bean;
+        return source;
     }
 }
 
