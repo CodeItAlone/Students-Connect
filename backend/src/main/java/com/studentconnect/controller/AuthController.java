@@ -5,7 +5,6 @@ import com.studentconnect.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
