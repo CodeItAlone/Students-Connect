@@ -18,7 +18,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.cors.CorsConfigurationSource;
 import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -74,16 +73,15 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         
         config.setAllowCredentials(true);
+        config.setAllowedOrigins(Arrays.asList(
+            "http://localhost:3000",
+            "https://students-connect.vercel.app"
+        ));
         
-        // Use wildcard patterns to ensure total compatibility with production origins
-        // while still supporting allowCredentials(true)
-        List<String> origins = List.of("*");
+        System.out.println("=== [CORS DEBUG] INITIALIZING WITH AUTHORITATIVE ORIGINS: https://students-connect.vercel.app ===");
         
-        System.out.println("=== [CORS DEBUG] INITIALIZING WITH WILDCARD ORIGIN PATTERNS: " + origins + " ===");
-        
-        config.setAllowedOriginPatterns(origins);
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        config.setAllowedHeaders(Arrays.asList("*"));
+        config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"));
         config.setExposedHeaders(Arrays.asList("Authorization"));
         config.setMaxAge(3600L);
         
