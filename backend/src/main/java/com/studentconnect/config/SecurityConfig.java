@@ -79,6 +79,7 @@ public class SecurityConfig {
                 .map(String::trim)
                 .collect(Collectors.toList());
         
+        System.out.println("=== [CORS DEBUG] INITIALIZING WITH ORIGINS: " + origins + " ===");
         log.info("[CORS DEBUG] Initializing CORS with origins: {}", origins);
         
         config.setAllowedOrigins(origins);
