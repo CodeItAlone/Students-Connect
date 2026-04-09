@@ -43,7 +43,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
@@ -69,8 +69,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
-    public CorsFilter corsFilter() {
+    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         
@@ -80,6 +79,8 @@ public class SecurityConfig {
                 .map(String::trim)
                 .collect(Collectors.toList());
         
+        log.info("[CORS DEBUG] Initializing CORS with origins: {}", origins);
+        
         config.setAllowedOrigins(origins);
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(Arrays.asList("*"));
@@ -87,10 +88,7 @@ public class SecurityConfig {
         config.setMaxAge(3600L);
         
         source.registerCorsConfiguration("/**", config);
-        
-        log.info("CORS Global Filter initialized with allowed origins: {}", origins);
-        
-        return new CorsFilter(source);
+        return source;
     }
 }
 
