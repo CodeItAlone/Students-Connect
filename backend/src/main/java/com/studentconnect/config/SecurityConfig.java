@@ -28,13 +28,19 @@ import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 @lombok.extern.slf4j.Slf4j
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
+
+    public SecurityConfig(JwtFilter jwtFilter, OAuth2SuccessHandler oAuth2SuccessHandler, OAuth2FailureHandler oAuth2FailureHandler) {
+        this.jwtFilter = jwtFilter;
+        this.oAuth2SuccessHandler = oAuth2SuccessHandler;
+        this.oAuth2FailureHandler = oAuth2FailureHandler;
+        System.out.println("=== [DEBUG] SecurityConfig Bean Initialized ===");
+    }
 
     @Value("${app.cors.allowed-origins:http://localhost:3000}")
     private String allowedOrigins;
@@ -79,10 +85,10 @@ public class SecurityConfig {
                 .map(String::trim)
                 .collect(Collectors.toList());
         
-        System.out.println("=== [CORS DEBUG] INITIALIZING WITH ORIGINS: " + origins + " ===");
-        log.info("[CORS DEBUG] Initializing CORS with origins: {}", origins);
+        System.out.println("=== [CORS DEBUG] INITIALIZING WITH ORIGIN PATTERNS: " + origins + " ===");
+        log.info("[CORS DEBUG] Initializing CORS with origin patterns: {}", origins);
         
-        config.setAllowedOrigins(origins);
+        config.setAllowedOriginPatterns(origins);
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setExposedHeaders(Arrays.asList("Authorization"));
