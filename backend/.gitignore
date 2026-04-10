@@ -1,9 +1,11 @@
 # ====================
 # Build / IDE
 # ====================
+target/
 *.class
 *.war
 *.log
+
 .idea/
 *.iml
 .project

@@ -5,6 +5,12 @@ node_modules/
 .next/
 out/
 build/
+target/
+*.jar
+*.war
+*.zip
+*.tar.gz
+
 
 # ================================
 # Environment Variables
