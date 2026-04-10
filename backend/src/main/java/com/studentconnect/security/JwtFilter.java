@@ -21,10 +21,17 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
+        // 1. ALWAYS skip filtering for OPTIONS (Preflight) requests
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            return true;
+        }
+
+        // 2. Skip filtering for auth and oauth endpoints
         String path = request.getServletPath();
         return path.startsWith("/oauth2")
                 || path.startsWith("/login/oauth2")
-                || path.startsWith("/api/auth");
+                || path.startsWith("/api/auth")
+                || path.startsWith("/api/health");
     }
 
     @Override
@@ -39,13 +46,14 @@ public class JwtFilter extends OncePerRequestFilter {
             String token = header.substring(7);
 
             try {
-                String email = jwtTokenProvider.getEmail(token);
+                if (jwtTokenProvider.validateToken(token)) { // Added validation check
+                    String email = jwtTokenProvider.getEmail(token);
 
-                UsernamePasswordAuthenticationToken auth =
-                        new UsernamePasswordAuthenticationToken(email, null, List.of());
+                    UsernamePasswordAuthenticationToken auth =
+                            new UsernamePasswordAuthenticationToken(email, null, List.of());
 
-                SecurityContextHolder.getContext().setAuthentication(auth);
-
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+                }
             } catch (Exception e) {
                 SecurityContextHolder.clearContext();
             }
