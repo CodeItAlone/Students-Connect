@@ -28,7 +28,7 @@ public class SecurityConfig {
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
 
-    @Value("${app.cors.allowed-origins}")
+    @Value("${CORS_ALLOWED_ORIGINS:http://localhost:3000}")
     private String allowedOrigins;
 
     public SecurityConfig(JwtFilter jwtFilter,
@@ -49,9 +49,15 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(request -> {
                 CorsConfiguration config = new CorsConfiguration();
 
-                List<String> origins = Arrays.stream(allowedOrigins.split(","))
-                        .map(String::trim)
-                        .toList();
+                List<String> origins;
+                if (allowedOrigins == null || allowedOrigins.trim().isEmpty()) {
+                    origins = List.of("http://localhost:3000");
+                } else {
+                    origins = Arrays.stream(allowedOrigins.split(","))
+                            .map(String::trim)
+                            .filter(s -> !s.isEmpty())
+                            .toList();
+                }
 
                 log.info("=== CORS ACTIVE WITH ORIGINS: {} ===", origins);
 

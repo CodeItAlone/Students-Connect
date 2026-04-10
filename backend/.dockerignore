@@ -1,0 +1,17 @@
+target/
+.git/
+.env
+.env.*
+node_modules/
+*.log
+.mvn/
+mvnw
+mvnw.cmd
+Dockerfile
+.dockerignore
+.gitignore
+.agent/
+.gemini/
+README.md
+pom.xml.bak
+src/test/
