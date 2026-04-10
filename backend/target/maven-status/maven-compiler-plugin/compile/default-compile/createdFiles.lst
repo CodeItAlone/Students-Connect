@@ -8,6 +8,7 @@ com\studentconnect\model\Mentor$MentorBuilder.class
 com\studentconnect\service\EmailService.class
 com\studentconnect\security\OAuth2FailureHandler.class
 com\studentconnect\model\MentorSlot$MentorSlotBuilder.class
+com\studentconnect\controller\HealthController.class
 com\studentconnect\repository\UserRepository.class
 com\studentconnect\service\ChatService.class
 com\studentconnect\controller\ClubController.class
