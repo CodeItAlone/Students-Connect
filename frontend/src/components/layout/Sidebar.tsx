@@ -21,7 +21,7 @@ interface SidebarProps {
 }
 
 const navItems = [
-    { href: '/', label: 'Discovery', icon: Home },
+    { href: '/dashboard', label: 'Discovery', icon: Home },
     { href: '/clubs', label: 'Clubs', icon: Users },
     { href: '/events', label: 'Events', icon: Calendar },
     { href: '/opportunities', label: 'Opportunities', icon: Briefcase },
