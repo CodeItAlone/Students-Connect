@@ -35,7 +35,7 @@ export default function FinalCTA() {
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                            <Link href="/signup" className="w-full sm:w-auto">
+                            <Link href="/register" className="w-full sm:w-auto">
                                 <Button 
                                     variant="secondary" 
                                     size="lg" 

@@ -47,7 +47,7 @@ export default function LandingFooter() {
                         <h4 className="text-sm font-black text-surface-900 dark:text-surface-100 uppercase tracking-widest">Join Us</h4>
                         <ul className="space-y-4">
                             <li><Link href="/login" className="text-sm font-medium text-surface-500 hover:text-primary-600 transition-colors">Login</Link></li>
-                            <li><Link href="/signup" className="text-sm font-medium text-surface-500 hover:text-primary-600 transition-colors">Sign Up</Link></li>
+                            <li><Link href="/register" className="text-sm font-medium text-surface-500 hover:text-primary-600 transition-colors">Sign Up</Link></li>
                         </ul>
                     </div>
                 </div>

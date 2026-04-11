@@ -53,7 +53,7 @@ export default function LandingHero() {
                             transition={{ duration: 0.5, delay: 0.3 }}
                             className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start pt-4"
                         >
-                            <Link href="/signup" className="w-full sm:w-auto">
+                            <Link href="/register" className="w-full sm:w-auto">
                                 <Button 
                                     variant="primary" 
                                     size="lg" 

@@ -62,7 +62,7 @@ export default function LandingNavbar() {
                     <Link href="/login">
                         <Button variant="ghost" className="rounded-full font-bold">Login</Button>
                     </Link>
-                    <Link href="/signup">
+                    <Link href="/register">
                         <Button variant="primary" className="rounded-full font-bold px-6 shadow-glow hover:scale-105 transition-all" rightIcon={<ArrowRight className="w-4 h-4" />}>
                             Sign Up
                         </Button>
@@ -102,7 +102,7 @@ export default function LandingNavbar() {
                                 <Link href="/login" onClick={() => setIsMenuOpen(false)}>
                                     <Button variant="secondary" className="w-full rounded-full font-bold">Login</Button>
                                 </Link>
-                                <Link href="/signup" onClick={() => setIsMenuOpen(false)}>
+                                <Link href="/register" onClick={() => setIsMenuOpen(false)}>
                                     <Button variant="primary" className="w-full rounded-full font-bold">Sign Up</Button>
                                 </Link>
                             </div>
