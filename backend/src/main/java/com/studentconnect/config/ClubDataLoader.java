@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -22,27 +21,43 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-@org.springframework.context.annotation.Lazy(false)
 public class ClubDataLoader implements CommandLineRunner {
 
     private final ClubRepository clubRepository;
     private final ClubMemberRepository clubMemberRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final org.springframework.transaction.support.TransactionTemplate transactionTemplate;
 
     @org.springframework.beans.factory.annotation.Value("${app.frontend.url:https://students-connect.vercel.app}")
     private String frontendUrl;
 
     @Override
-    @Transactional
     public void run(String... args) throws Exception {
+        log.info("Application context loaded. Backend is ready to serve. Seeding will commence in background...");
+        
+        // Run seeding in a separate thread to avoid blocking Render's port binding/startup health check
+        new Thread(() -> {
+            try {
+                // Use TransactionTemplate to ensure the background work is wrapped in a transaction
+                transactionTemplate.execute(status -> {
+                    performSeeding();
+                    return null;
+                });
+            } catch (Exception e) {
+                log.error("Background seeding failed: {}", e.getMessage(), e);
+            }
+        }).start();
+    }
+
+    private void performSeeding() {
         try {
             if (clubRepository.count() > 0) {
-                log.info("Clubs already exist in database (Count: {}), skipping seeding.", clubRepository.count());
+                log.info("Clubs already exist in database (Count: {}), skipping background seeding.", clubRepository.count());
                 return;
             }
 
-            log.info("Starting production club seeding for Student Connect...");
+            log.info("Background thread: Starting production club seeding...");
 
             // Null safety for frontendUrl
             String safeFrontendUrl = (frontendUrl != null) ? frontendUrl : "https://students-connect.vercel.app";
@@ -51,7 +66,6 @@ public class ClubDataLoader implements CommandLineRunner {
             // 1. Ensure we have a system leader
             User admin = userRepository.findByEmail("admin@studentconnect.com")
                     .orElseGet(() -> {
-                        // Double check username to avoid duplicate key violation
                         String adminUsername = "system_admin";
                         if (userRepository.existsByUsername(adminUsername)) {
                             adminUsername = "admin_main";
@@ -69,14 +83,13 @@ public class ClubDataLoader implements CommandLineRunner {
                         return userRepository.save(newUser);
                     });
 
-            // 2. Create Mock Users for memberships (20 students)
+            // 2. Create Mock Users (20 students)
             List<User> mockUsers = new ArrayList<>();
             for (int i = 1; i <= 20; i++) {
                 final int index = i;
                 String email = "student" + index + "@example.com";
                 String username = "student_" + index;
                 
-                // Robust check: exists by email OR by username
                 User student = userRepository.findByEmail(email).orElse(null);
                 
                 if (student == null) {
@@ -92,16 +105,17 @@ public class ClubDataLoader implements CommandLineRunner {
                                 .build();
                         student = userRepository.save(s);
                     } else {
-                        // If username exists but email doesn't, skip this mock user to avoid crash
-                        log.warn("Username {} already exists, skipping mock user for {}", username, email);
+                        log.warn("Username {} already exists, skipping for {}", username, email);
                         continue;
                     }
                 }
                 mockUsers.add(student);
             }
 
-            // 3. Seed Clubs with specified images
+            // 3. Seed Clubs
             if (mockUsers.size() >= 10) {
+                log.info("Mock users verified. Creating club records...");
+                
                 seedClub("CodeCraft Society", "codecraft-society", "Technology",
                         "Build real projects, crack hackathons, and master coding together.",
                         "A high-energy coding community for developers, builders, and problem solvers.",
@@ -138,10 +152,9 @@ public class ClubDataLoader implements CommandLineRunner {
                         admin, mockUsers.subList(0, Math.min(mockUsers.size(), 20)));
             }
 
-            log.info("Production club seeding completed successfully.");
+            log.info("Background Seeding Completed: 5 clubs successfully verified/created.");
         } catch (Exception e) {
-            // CRITICAL: Catch all to prevent app crash on startup
-            log.error("FAILED TO SEED CLUBS: {}. Application will continue to start.", e.getMessage());
+            log.error("ERROR DURING BACKGROUND SEEDING: {}. System remains online.", e.getMessage(), e);
         }
     }
 
