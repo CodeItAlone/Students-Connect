@@ -22,6 +22,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+@org.springframework.context.annotation.Lazy(false)
 public class ClubDataLoader implements CommandLineRunner {
 
     private final ClubRepository clubRepository;
@@ -29,15 +30,21 @@ public class ClubDataLoader implements CommandLineRunner {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @org.springframework.beans.factory.annotation.Value("${app.frontend.url:https://students-connect.vercel.app}")
+    private String frontendUrl;
+
     @Override
     @Transactional
     public void run(String... args) throws Exception {
         if (clubRepository.count() > 0) {
-            log.info("Clubs already exist, skipping seeding.");
+            log.info("Clubs already exist in database (Count: {}), skipping seeding.", clubRepository.count());
             return;
         }
 
-        log.info("Seeding premium clubs for judge demo...");
+        log.info("Starting production club seeding for Student Connect...");
+
+        // Ensure frontend URL doesn't have trailing slash for consistency
+        String baseUrl = frontendUrl.endsWith("/") ? frontendUrl.substring(0, frontendUrl.length() - 1) : frontendUrl;
 
         // 1. Ensure we have a system leader
         User admin = userRepository.findByEmail("admin@studentconnect.com")
@@ -54,7 +61,7 @@ public class ClubDataLoader implements CommandLineRunner {
                     return userRepository.save(newUser);
                 });
 
-        // 2. Create Mock Users for memberships
+        // 2. Create Mock Users for memberships (20 students)
         List<User> mockUsers = new ArrayList<>();
         for (int i = 1; i <= 20; i++) {
             final int index = i;
@@ -74,43 +81,45 @@ public class ClubDataLoader implements CommandLineRunner {
             mockUsers.add(student);
         }
 
-        // 3. Seed Clubs
+        // 3. Seed Clubs with specified images
+        // ai.jpg, laptop.jpg, study.jpg, meeting.jpg, vr.jpg
+        
         seedClub("CodeCraft Society", "codecraft-society", "Technology",
                 "Build real projects, crack hackathons, and master coding together.",
                 "A high-energy coding community for developers, builders, and problem solvers. Members collaborate on web apps, open source projects, hackathons, and interview prep.",
                 Arrays.asList("Web Dev", "DSA", "Open Source", "Hackathons"),
-                "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1200",
+                baseUrl + "/banners/laptop.jpg",
                 admin, mockUsers.subList(0, 15));
 
         seedClub("AI Innovators Circle", "ai-innovators-circle", "Artificial Intelligence",
                 "Explore AI tools, machine learning, automation, and future careers.",
                 "A future-focused club for students learning AI tools, prompt engineering, automation workflows, and machine learning fundamentals.",
                 Arrays.asList("AI", "ML", "Automation", "Prompting"),
-                "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1200",
+                baseUrl + "/banners/ai.jpg",
                 admin, mockUsers.subList(5, 12));
 
         seedClub("Career Launch Network", "career-launch-network", "Career Development",
                 "Accelerate internships, placements, resumes, and interview success.",
                 "Designed for ambitious students who want internships, jobs, resume upgrades, networking, and placement preparation.",
                 Arrays.asList("Placements", "Resume", "Interview", "Jobs"),
-                "https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1200",
+                baseUrl + "/banners/study.jpg",
                 admin, mockUsers.subList(8, 18));
 
         seedClub("Startup Founders Hub", "startup-founders-hub", "Entrepreneurship",
                 "Turn ideas into startups, products, and winning pitches.",
                 "A builder community for entrepreneurs, creators, and students launching startups, MVPs, and pitch decks.",
                 Arrays.asList("Startup", "Founder", "Pitching", "Business"),
-                "https://images.unsplash.com/photo-1559136555-9303baea8ebd?q=80&w=1200",
-                admin, mockUsers.subList(0, 8));
+                baseUrl + "/banners/meeting.jpg",
+                admin, mockUsers.subList(0, 10));
 
         seedClub("Social Impact Alliance", "social-impact-alliance", "Leadership",
                 "Lead change through volunteering, sustainability, and social projects.",
                 "A community of changemakers driving awareness campaigns, volunteering initiatives, and leadership through action.",
                 Arrays.asList("Leadership", "NGO", "Sustainability", "Volunteering"),
-                "https://images.unsplash.com/photo-1559027615-cd940b54e7d4?q=80&w=1200",
+                baseUrl + "/banners/vr.jpg",
                 admin, mockUsers.subList(12, 20));
 
-        log.info("Clubs seeding completed successfully.");
+        log.info("Production club seeding completed successfully. 5 clubs created.");
     }
 
     private void seedClub(String name, String slug, String category, String shortDesc, String fullDesc, 
