@@ -19,7 +19,7 @@ public class OAuth2FailureHandler implements AuthenticationFailureHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(OAuth2FailureHandler.class);
 
-    @Value("${app.frontend.url:http://localhost:3000}")
+    @Value("${app.frontend.url:https://students-connect.vercel.app}")
     private String frontendUrl;
 
     @Override

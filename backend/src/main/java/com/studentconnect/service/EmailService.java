@@ -26,6 +26,9 @@ public class EmailService {
     @Value("${sendgrid.from.email}")
     private String fromEmail;
 
+    @Value("${app.frontend.url}")
+    private String frontendUrl;
+
     @Async
     public void sendVerificationEmail(String toEmail, String token) {
         try {
@@ -38,7 +41,7 @@ public class EmailService {
             // "Frontend verification link opens frontend route: /verify-email?token=... Frontend will call backend verify endpoint automatically"
             // So the button link in the email should point to the frontend.
             
-            String frontendVerifyUrl = "http://localhost:3000/verify-email?token=" + token;
+            String frontendVerifyUrl = frontendUrl + "/verify-email?token=" + token;
             
             String htmlContent = "<div style=\"font-family: Arial, sans-serif; text-align: center; padding: 20px;\">"
                     + "<h2>Welcome to Student Connect!</h2>"

@@ -28,7 +28,7 @@ public class SecurityConfig {
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
 
-    @Value("${CORS_ALLOWED_ORIGINS:http://localhost:3000}")
+    @Value("${CORS_ALLOWED_ORIGINS:http://localhost:3000,https://students-connect.vercel.app}")
     private String allowedOrigins;
 
     public SecurityConfig(JwtFilter jwtFilter,
@@ -51,7 +51,7 @@ public class SecurityConfig {
 
                 List<String> origins;
                 if (allowedOrigins == null || allowedOrigins.trim().isEmpty()) {
-                    origins = List.of("http://localhost:3000");
+                    origins = List.of("http://localhost:3000", "https://students-connect.vercel.app");
                 } else {
                     origins = Arrays.stream(allowedOrigins.split(","))
                             .map(String::trim)
