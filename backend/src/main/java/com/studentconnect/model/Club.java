@@ -25,8 +25,18 @@ public class Club {
     @Column(unique = true, nullable = false)
     private String slug;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(name = "short_description")
+    private String shortDescription;
+
+    @Column(name = "full_description", columnDefinition = "TEXT")
+    private String fullDescription;
+
+    @Column(name = "website_url")
+    private String websiteUrl;
+
+    @Column(name = "is_open", nullable = false)
+    @Builder.Default
+    private boolean isOpen = true;
 
     @Column(nullable = false)
     private String category;

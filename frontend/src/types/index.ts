@@ -41,7 +41,10 @@ export interface Club {
     id: number;
     name: string;
     slug: string;
-    description: string;
+    shortDescription: string;
+    fullDescription: string;
+    websiteUrl?: string;
+    isOpen: boolean;
     bannerUrl?: string;
     logoUrl?: string;
     category: string;

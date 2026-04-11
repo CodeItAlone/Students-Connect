@@ -10,7 +10,10 @@ public class ClubResponse {
     private Long id;
     private String name;
     private String slug;
-    private String description;
+    private String shortDescription;
+    private String fullDescription;
+    private String websiteUrl;
+    private boolean isOpen;
     private String category;
     private String logoUrl;
     private String bannerUrl;

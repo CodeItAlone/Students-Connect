@@ -59,10 +59,13 @@ public class ClubService {
 
         Club club = Club.builder()
                 .name(request.getName())
-                .description(request.getDescription())
+                .shortDescription(request.getShortDescription())
+                .fullDescription(request.getFullDescription())
                 .category(request.getCategory())
                 .logoUrl(request.getLogoUrl())
                 .bannerUrl(request.getBannerUrl())
+                .websiteUrl(request.getWebsiteUrl())
+                .isOpen(true)
                 .tags(request.getTags() != null ? request.getTags() : List.of())
                 .college(owner.getCollege())
                 .leader(owner)
@@ -130,6 +133,24 @@ public class ClubService {
                 .collect(Collectors.toList());
     }
 
+    public List<ClubResponse> getJoinedClubs(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        
+        return clubMemberRepository.findByUser(user).stream()
+                .map(membership -> mapToResponse(membership.getClub(), user))
+                .collect(Collectors.toList());
+    }
+
+    public List<ClubResponse> getJoinedClubsByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        
+        return clubMemberRepository.findByUser(user).stream()
+                .map(membership -> mapToResponse(membership.getClub(), user))
+                .collect(Collectors.toList());
+    }
+
     private ClubResponse mapToResponse(Club club, User currentUser) {
         boolean isJoined = currentUser != null && clubMemberRepository.existsByClubAndUser(club, currentUser);
         long memberCount = clubMemberRepository.countByClub(club);
@@ -138,10 +159,13 @@ public class ClubService {
                 .id(club.getId())
                 .name(club.getName())
                 .slug(club.getSlug())
-                .description(club.getDescription())
+                .shortDescription(club.getShortDescription())
+                .fullDescription(club.getFullDescription())
                 .category(club.getCategory())
                 .logoUrl(club.getLogoUrl())
                 .bannerUrl(club.getBannerUrl())
+                .websiteUrl(club.getWebsiteUrl())
+                .isOpen(club.isOpen())
                 .college(club.getCollege())
                 .verified(club.isVerified())
                 .tags(club.getTags())

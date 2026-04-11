@@ -59,13 +59,18 @@ public class ClubController {
         return ResponseEntity.ok(Map.of("message", "Successfully joined the club"));
     }
 
-    @PostMapping("/{clubId}/leave")
+    @DeleteMapping("/{clubId}/leave")
     public ResponseEntity<Map<String, String>> leaveClub(
             @PathVariable Long clubId,
             @AuthenticationPrincipal UserDetails userDetails) {
         
         clubService.leaveClub(clubId, userDetails.getUsername());
         return ResponseEntity.ok(Map.of("message", "Successfully left the club"));
+    }
+
+    @GetMapping("/{clubId}/members/count")
+    public ResponseEntity<Map<String, Long>> getMemberCount(@PathVariable Long clubId) {
+        return ResponseEntity.ok(Map.of("count", (long) clubService.getMembers(clubId).size()));
     }
 
     @GetMapping("/{clubId}/members")

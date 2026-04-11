@@ -18,6 +18,6 @@ public interface ClubRepository extends JpaRepository<Club, Long> {
 
     @Query("SELECT c FROM Club c WHERE " +
            "(:category IS NULL OR c.category = :category) AND " +
-           "(:search IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(c.description) LIKE LOWER(CONCAT('%', :search, '%')))")
+           "(:search IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(c.fullDescription) LIKE LOWER(CONCAT('%', :search, '%')))")
     Page<Club> findAllWithFilters(@Param("category") String category, @Param("search") String search, Pageable pageable);
 }

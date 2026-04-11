@@ -82,7 +82,7 @@ export const useClubStore = create<ClubState>()((set) => ({
 
     leaveClub: async (clubId: number) => {
         try {
-            await api.post(`/clubs/${clubId}/leave`);
+            await api.delete(`/clubs/${clubId}/leave`);
             set((state) => ({
                 currentClub: state.currentClub
                     ? { ...state.currentClub, isJoined: false, memberCount: state.currentClub.memberCount - 1 }
