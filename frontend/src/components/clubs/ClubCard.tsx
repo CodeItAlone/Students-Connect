@@ -53,7 +53,7 @@ export default function ClubCard({ club }: ClubCardProps) {
                     </div>
 
                     <p className="text-sm text-surface-600 dark:text-surface-400 line-clamp-2">
-                        {club.description}
+                        {club.shortDescription}
                     </p>
 
                     <div className="flex items-center justify-between">
