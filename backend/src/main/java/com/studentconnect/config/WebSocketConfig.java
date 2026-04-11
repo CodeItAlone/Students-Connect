@@ -8,6 +8,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
+@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(name = "feature.chat.enabled", havingValue = "true")
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
