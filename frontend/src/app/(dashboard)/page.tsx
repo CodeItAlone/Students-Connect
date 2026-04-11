@@ -1,27 +1,73 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Sparkles, TrendingUp, Users, Calendar, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import { useClubStore } from '@/stores/clubStore';
 import { useEventStore } from '@/stores/eventStore';
-
-const stats = [
-    { label: 'Active Clubs', value: '150+', icon: Users, color: 'from-primary-500 to-primary-600' },
-    { label: 'Upcoming Events', value: '45', icon: Calendar, color: 'from-accent-500 to-accent-600' },
-    { label: 'Students Connected', value: '10K+', icon: TrendingUp, color: 'from-emerald-500 to-emerald-600' },
-];
+import api from '@/lib/api';
+import { DashboardStats } from '@/types';
 
 export default function DiscoveryPage() {
     const { clubs, fetchClubs, isLoading: clubsLoading } = useClubStore();
     const { events, fetchEvents, isLoading: eventsLoading } = useEventStore();
+    
+    const [statsData, setStatsData] = useState<DashboardStats | null>(null);
+    const [isStatsLoading, setIsStatsLoading] = useState(true);
+
+    const fetchStats = useCallback(async () => {
+        try {
+            const response = await api.get<DashboardStats>('/stats/dashboard');
+            setStatsData(response.data);
+        } catch (error) {
+            console.error('Failed to fetch dashboard stats:', error);
+            // Fallback to zero if failed and no data yet
+            setStatsData(prev => prev || { activeClubs: 0, upcomingEvents: 0, studentsConnected: 0 });
+        } finally {
+            setIsStatsLoading(false);
+        }
+    }, []);
 
     useEffect(() => {
         fetchClubs(0);
         fetchEvents(0);
-    }, [fetchClubs, fetchEvents]);
+        fetchStats();
+
+        // Auto-refresh every 30 seconds
+        const interval = setInterval(fetchStats, 30000);
+        
+        // Cleanup interval on unmount
+        return () => clearInterval(interval);
+    }, [fetchClubs, fetchEvents, fetchStats]);
+
+    const formatValue = (val: number | undefined) => {
+        if (val === undefined) return '...';
+        if (val > 999) return `${(val / 1000).toFixed(1)}K+`;
+        return val.toString();
+    };
+
+    const stats = [
+        { 
+            label: 'Active Clubs', 
+            value: isStatsLoading ? '...' : formatValue(statsData?.activeClubs), 
+            icon: Users, 
+            color: 'from-primary-500 to-primary-600' 
+        },
+        { 
+            label: 'Upcoming Events', 
+            value: isStatsLoading ? '...' : formatValue(statsData?.upcomingEvents), 
+            icon: Calendar, 
+            color: 'from-accent-500 to-accent-600' 
+        },
+        { 
+            label: 'Students Connected', 
+            value: isStatsLoading ? '...' : formatValue(statsData?.studentsConnected), 
+            icon: TrendingUp, 
+            color: 'from-emerald-500 to-emerald-600' 
+        },
+    ];
 
     const featuredClubs = clubs.slice(0, 4);
     const upcomingEvents = events.slice(0, 3);

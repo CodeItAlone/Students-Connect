@@ -14,6 +14,7 @@ import java.util.List;
 public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findByClub(Club club);
+    long countByStartDateAfter(java.time.LocalDateTime startDate);
 
     @Query("SELECT e FROM Event e WHERE " +
            "(:type IS NULL OR e.type = :type) AND " +

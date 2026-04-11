@@ -14,6 +14,7 @@ public interface ClubRepository extends JpaRepository<Club, Long> {
     Optional<Club> findBySlug(String slug);
 
     boolean existsBySlug(String slug);
+    long countByIsVerified(boolean isVerified);
 
     @Query("SELECT c FROM Club c WHERE " +
            "(:category IS NULL OR c.category = :category) AND " +
