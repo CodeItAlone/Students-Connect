@@ -24,8 +24,8 @@ public class StatsService {
         // Event Logic: Count events starting after now
         long upcomingEvents = eventRepository.countByStartDateAfter(LocalDateTime.now());
         
-        // User Logic: Count verified users
-        long studentsConnected = userRepository.countByVerified(true);
+        // User Logic: Count total registered users
+        long studentsConnected = userRepository.count();
 
         return DashboardStatsResponse.builder()
                 .activeClubs(activeClubs)
