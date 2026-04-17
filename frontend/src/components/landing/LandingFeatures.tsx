@@ -1,106 +1,104 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Users, Calendar, Briefcase, GraduationCap, Trophy, Shield, Sparkles } from 'lucide-react';
+import { Users, Calendar, Briefcase, GraduationCap, Layout, Megaphone } from 'lucide-react';
 
 const FEATURES = [
     {
-        title: 'Discover Clubs',
-        description: 'Join communities that match your professional and personal interests.',
+        title: 'Clubs & Communities',
+        description: 'Join the clubs that match your interests and find your people on campus.',
         icon: Users,
-        color: 'from-blue-500 to-cyan-500',
+        id: '01'
     },
     {
-        title: 'Find Events',
-        description: 'Hackathons, workshops, webinars, and college fests all in one calendar.',
+        title: 'Events & Activities',
+        description: 'Never miss a workshop, hackathon or fest — everything in one calendar.',
         icon: Calendar,
-        color: 'from-purple-500 to-pink-500',
+        id: '02'
     },
     {
         title: 'Opportunities Hub',
-        description: 'Access curated internships, jobs, and scholarships tailored to your profile.',
+        description: 'Internships, jobs, scholarships and hackathons — curated for students.',
         icon: Briefcase,
-        color: 'from-orange-500 to-amber-500',
+        id: '03'
     },
     {
-        title: 'Mentorship Network',
-        description: 'Learn from seniors, alumni, and industry experts in your field.',
+        title: 'Mentor Network',
+        description: 'Get 1:1 guidance from seniors and alumni who\'ve been where you are.',
         icon: GraduationCap,
-        color: 'from-emerald-500 to-teal-500',
+        id: '04'
     },
     {
-        title: 'College Communities',
-        description: 'Official college-managed spaces for notices, fests, and governance.',
-        icon: Shield,
-        color: 'from-indigo-500 to-blue-500',
+        title: 'Smart Dashboard',
+        description: 'A personalised feed that learns what matters most to your growth.',
+        icon: Layout,
+        id: '05'
     },
     {
-        title: 'Gamified Growth',
-        description: 'Grow your profile reputation and engagement through active participation.',
-        icon: Trophy,
-        color: 'from-rose-500 to-pink-500',
-    },
+        title: 'Announcements',
+        description: 'Official updates from your college — without the notice-board scramble.',
+        icon: Megaphone,
+        id: '06'
+    }
 ];
 
 export default function LandingFeatures() {
     return (
-        <section id="features" className="py-24 relative overflow-hidden bg-surface-50/50 dark:bg-surface-900/50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6">
-                <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
+        <section id="features" className="py-24 bg-white">
+            <div className="max-w-7xl mx-auto px-6">
+                {/* Header */}
+                <div className="mb-20">
+                    <motion.p 
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-xs font-bold uppercase tracking-widest"
+                        className="text-[10px] font-bold text-primary-600 uppercase tracking-widest mb-4"
                     >
-                        <Sparkles className="w-3 h-3" />
-                        <span>Platform Features</span>
-                    </motion.div>
+                        Features
+                    </motion.p>
                     <motion.h2 
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ delay: 0.1 }}
-                        className="text-4xl md:text-5xl font-black font-display text-surface-900 dark:text-surface-100"
+                        className="text-4xl md:text-5xl font-bold text-surface-900 mb-6 tracking-tight max-w-xl"
                     >
-                        Everything a Student Needs, <br />
-                        <span className="text-primary-600">In One Ecosystem.</span>
+                        Everything students look for, in one quiet place.
                     </motion.h2>
                     <motion.p 
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ delay: 0.2 }}
-                        className="text-lg text-surface-600 dark:text-surface-400 font-medium"
+                        transition={{ delay: 0.1 }}
+                        className="text-lg text-surface-500 max-w-2xl leading-relaxed"
                     >
-                        Student Connect bridges the gap between academics and opportunities, providing a centralized hub for campus life.
+                        Thoughtful tools that replace the tangle of WhatsApp groups, unread emails, and forgotten posters.
                     </motion.p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {FEATURES.map((feature, index) => {
-                        const Icon = feature.icon;
-                        return (
-                            <motion.div
-                                key={feature.title}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: index * 0.1 }}
-                                className="group p-8 rounded-[2rem] bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 hover:border-primary-500 dark:hover:border-primary-500 hover:shadow-2xl hover:shadow-primary-600/10 transition-all duration-500"
-                            >
-                                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center text-white shadow-lg mb-6 transform transition-transform group-hover:scale-110 group-hover:rotate-3`}>
-                                    <Icon className="w-7 h-7" />
-                                </div>
-                                <h3 className="text-xl font-bold text-surface-900 dark:text-surface-100 mb-3 group-hover:text-primary-600 transition-colors">
-                                    {feature.title}
-                                </h3>
-                                <p className="text-surface-600 dark:text-surface-400 leading-relaxed">
-                                    {feature.description}
-                                </p>
-                            </motion.div>
-                        );
-                    })}
+                {/* Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+                    {FEATURES.map((feature, i) => (
+                        <motion.div
+                            key={i}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: i * 0.1 }}
+                            className="group relative"
+                        >
+                            <div className="w-12 h-12 bg-surface-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary-50 transition-colors duration-300">
+                                <feature.icon className="w-6 h-6 text-primary-600" />
+                            </div>
+                            <h3 className="text-xl font-bold text-surface-900 mb-3">{feature.title}</h3>
+                            <p className="text-sm text-surface-500 leading-relaxed mb-6">
+                                {feature.description}
+                            </p>
+                            <span className="text-[10px] font-bold text-surface-300 group-hover:text-primary-400 transition-colors">
+                                {feature.id}
+                                <div className="mt-1 w-8 h-[1px] bg-surface-100 group-hover:bg-primary-200 transition-colors" />
+                            </span>
+                        </motion.div>
+                    ))}
                 </div>
             </div>
         </section>

@@ -1,47 +1,67 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Users, Layout, Calendar, Heart } from 'lucide-react';
 
 const STATS = [
-    { label: 'Students Joined', value: '1,200+', icon: Users, color: 'text-blue-600' },
-    { label: 'Active Clubs', value: '45+', icon: Layout, color: 'text-purple-600' },
-    { label: 'Events Hosted', value: '250+', icon: Calendar, color: 'text-emerald-600' },
-    { label: 'Community Vibes', value: '100%', icon: Heart, color: 'text-rose-600' },
+    { label: 'Students Connected', value: '500+' },
+    { label: 'Opportunities Shared', value: '50+' },
+    { label: 'Campus Clubs', value: '20+' },
+    { label: 'Mentor Interactions', value: '100+' }
 ];
 
 export default function LandingStats() {
     return (
-        <section className="py-20 relative bg-primary-600 dark:bg-primary-950 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary-600 to-accent-700 opacity-90" />
-            
-            {/* Background Pattern */}
-            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+        <section className="py-24 bg-white">
+            <div className="max-w-7xl mx-auto px-6">
+                <motion.div 
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="bg-surface-900 rounded-[3rem] p-12 md:p-20 relative overflow-hidden"
+                >
+                    {/* Decorative Background */}
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-primary-600/10 blur-[100px] rounded-full -mr-48 -mt-48" />
+                    <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary-500/10 blur-[100px] rounded-full -ml-48 -mb-48" />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 text-center">
-                    {STATS.map((stat, index) => {
-                        const Icon = stat.icon;
-                        return (
-                            <motion.div
-                                key={stat.label}
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: index * 0.1 }}
-                                className="space-y-4"
-                            >
-                                <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center mx-auto text-white shadow-xl border border-white/10">
-                                    <Icon className="w-8 h-8" />
-                                </div>
-                                <div>
-                                    <p className="text-3xl md:text-5xl font-black text-white font-display mb-1">{stat.value}</p>
-                                    <p className="text-xs md:text-sm font-bold text-primary-100 uppercase tracking-[0.2em]">{stat.label}</p>
-                                </div>
-                            </motion.div>
-                        );
-                    })}
-                </div>
+                    <div className="relative z-10">
+                        {/* Header */}
+                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-20">
+                            <div>
+                                <p className="text-[10px] font-bold text-primary-400 uppercase tracking-widest mb-4">Early Traction</p>
+                                <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight max-w-xl">
+                                    Real students, already finding their place.
+                                </h2>
+                            </div>
+                            <div className="md:text-right">
+                                <p className="text-sm text-surface-400 max-w-[240px] md:ml-auto">
+                                    Numbers from our pilot cohort. No vanity metrics.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Stats Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-16">
+                            {STATS.map((stat, i) => (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: 0.2 + (i * 0.1) }}
+                                    className="flex flex-col gap-2"
+                                >
+                                    <span className="text-4xl md:text-6xl font-black text-white tracking-tighter">
+                                        {stat.value}
+                                    </span>
+                                    <span className="text-[10px] font-bold text-surface-400 uppercase tracking-[0.2em]">
+                                        {stat.label}
+                                    </span>
+                                    <div className="mt-4 w-8 h-[2px] bg-primary-600 opacity-50" />
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </motion.div>
             </div>
         </section>
     );

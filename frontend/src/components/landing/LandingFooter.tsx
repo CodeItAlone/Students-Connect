@@ -1,65 +1,88 @@
 'use client';
 
 import Link from 'next/link';
+import { GraduationCap } from 'lucide-react';
 
 export default function LandingFooter() {
     return (
-        <footer className="bg-surface-50 dark:bg-surface-900 border-t border-surface-200 dark:border-surface-800 pt-20 pb-10">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 mb-16">
-                    {/* Brand */}
-                    <div className="col-span-2 lg:col-span-2 space-y-6">
-                        <Link href="/" className="flex items-center gap-2 group">
-                            <div className="w-10 h-10 rounded-xl overflow-hidden shadow-lg border border-white/20">
-                                <img src="/logo.jpg" alt="Student Connect" className="w-full h-full object-cover" />
+        <footer id="footer" className="bg-white border-t border-surface-100 pt-24 pb-12">
+            <div className="max-w-7xl mx-auto px-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-20">
+                    {/* Brand Column */}
+                    <div className="lg:col-span-2 space-y-8">
+                        <Link href="/" className="flex items-center gap-2.5">
+                            <div className="w-10 h-10 bg-surface-900 rounded-xl flex items-center justify-center shadow-lg">
+                                <GraduationCap className="w-6 h-6 text-white" />
                             </div>
-                            <span className="text-xl font-black font-display tracking-tight text-surface-900 dark:text-surface-100">
-                                Student Connect
+                            <span className="text-xl font-bold tracking-tight text-surface-900">
+                                StudentConnect
                             </span>
                         </Link>
-                        <p className="text-surface-500 dark:text-surface-400 font-medium max-w-xs leading-relaxed">
-                            The all-in-one ecosystem for students, colleges, and communities. Where growth meets opportunity.
+                        <p className="text-sm text-surface-500 max-w-xs leading-relaxed">
+                            A calmer, more connected campus. Discover clubs, events, mentors and opportunities — without the noise.
                         </p>
+                        <div className="flex items-center gap-4">
+                            {[
+                                { icon: (props: any) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>, label: 'Twitter' },
+                                { icon: (props: any) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>, label: 'Instagram' },
+                                { icon: (props: any) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>, label: 'LinkedIn' },
+                                { icon: (props: any) => <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>, label: 'GitHub' }
+                            ].map((social, i) => (
+                                <Link key={i} href="#" className="p-2 bg-surface-50 rounded-lg text-surface-400 hover:text-primary-600 hover:bg-primary-50 transition-all">
+                                    <social.icon className="w-5 h-5" />
+                                </Link>
+                            ))}
+                        </div>
                     </div>
 
-                    {/* Quick Links */}
-                    <div className="space-y-6">
-                        <h4 className="text-sm font-black text-surface-900 dark:text-surface-100 uppercase tracking-widest">Platform</h4>
+                    {/* Links Columns */}
+                    <div>
+                        <h4 className="text-[10px] font-bold text-surface-900 uppercase tracking-[0.2em] mb-6">Product</h4>
                         <ul className="space-y-4">
-                            <li><Link href="#features" className="text-sm font-medium text-surface-500 hover:text-primary-600 transition-colors">Features</Link></li>
-                            <li><Link href="#how-it-works" className="text-sm font-medium text-surface-500 hover:text-primary-600 transition-colors">How It Works</Link></li>
-                            <li><Link href="#preview" className="text-sm font-medium text-surface-500 hover:text-primary-600 transition-colors">Showcase</Link></li>
+                            {['Features', 'Mentor Network', 'Opportunities', 'Roadmap'].map((item) => (
+                                <li key={item}>
+                                    <Link href="#" className="text-sm text-surface-500 hover:text-surface-900 transition-colors">{item}</Link>
+                                </li>
+                            ))}
                         </ul>
                     </div>
 
-                    {/* Community */}
-                    <div className="space-y-6">
-                        <h4 className="text-sm font-black text-surface-900 dark:text-surface-100 uppercase tracking-widest">Support</h4>
+                    <div>
+                        <h4 className="text-[10px] font-bold text-surface-900 uppercase tracking-[0.2em] mb-6">Company</h4>
                         <ul className="space-y-4">
-                            <li><Link href="#" className="text-sm font-medium text-surface-500 hover:text-primary-600 transition-colors">Help Center</Link></li>
-                            <li><Link href="#" className="text-sm font-medium text-surface-500 hover:text-primary-600 transition-colors">Contact Us</Link></li>
-                            <li><Link href="#" className="text-sm font-medium text-surface-500 hover:text-primary-600 transition-colors">Privacy Policy</Link></li>
+                            {['About', 'For Colleges', 'Careers', 'Contact'].map((item) => (
+                                <li key={item}>
+                                    <Link href="#" className="text-sm text-surface-500 hover:text-surface-900 transition-colors">{item}</Link>
+                                </li>
+                            ))}
                         </ul>
                     </div>
 
-                    {/* Auth */}
-                    <div className="space-y-6">
-                        <h4 className="text-sm font-black text-surface-900 dark:text-surface-100 uppercase tracking-widest">Join Us</h4>
+                    <div>
+                        <h4 className="text-[10px] font-bold text-surface-900 uppercase tracking-[0.2em] mb-6">Resources</h4>
                         <ul className="space-y-4">
-                            <li><Link href="/login" className="text-sm font-medium text-surface-500 hover:text-primary-600 transition-colors">Login</Link></li>
-                            <li><Link href="/register" className="text-sm font-medium text-surface-500 hover:text-primary-600 transition-colors">Sign Up</Link></li>
+                            {['Help Center', 'Community', 'Student Guide', 'Changelog'].map((item) => (
+                                <li key={item}>
+                                    <Link href="#" className="text-sm text-surface-500 hover:text-surface-900 transition-colors">{item}</Link>
+                                </li>
+                            ))}
                         </ul>
                     </div>
                 </div>
 
-                <div className="pt-8 border-t border-surface-200 dark:border-surface-800 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <p className="text-sm text-surface-500 font-medium text-center md:text-left">
-                        © 2026 Student Connect. All rights reserved. 
+                {/* Bottom Row */}
+                <div className="pt-12 border-t border-surface-100 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <p className="text-xs text-surface-400">
+                        © 2026 Student Connect. All rights reserved.
                     </p>
-                    <div className="flex gap-8">
-                        <Link href="#" className="text-xs font-bold text-surface-400 hover:text-surface-600 uppercase tracking-widest">Twitter</Link>
-                        <Link href="#" className="text-xs font-bold text-surface-400 hover:text-surface-600 uppercase tracking-widest">Instagram</Link>
-                        <Link href="#" className="text-xs font-bold text-surface-400 hover:text-surface-600 uppercase tracking-widest">LinkedIn</Link>
+                    <div className="flex items-center gap-8">
+                        <Link href="mailto:hello@studentconnect.io" className="text-xs font-bold text-surface-900 hover:text-primary-600 transition-colors">
+                            hello@studentconnect.io
+                        </Link>
+                        <div className="flex items-center gap-6">
+                            <Link href="#" className="text-xs text-surface-400 hover:text-surface-900 transition-colors">Privacy</Link>
+                            <Link href="#" className="text-xs text-surface-400 hover:text-surface-900 transition-colors">Terms</Link>
+                        </div>
                     </div>
                 </div>
             </div>
